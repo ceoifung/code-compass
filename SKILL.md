@@ -28,7 +28,8 @@ description: 项目上下文路由与自进化记忆系统。凡是仓库里存�
 
 1. AGENTS.md 由 ZCode 自动加载，其路由指向：
 2. 读 `.ai/index/code-map.md` 与 `.ai/memory/active.md`（这两个必读，其余按需）。
-3. 若 active.md 显示有未完成任务，先向用户确认是否继续，再动手。
+3. 若 active.md 显示有未完成任务，先向用户确认是否继续再动手；若有 awaiting-confirmation
+   （已实施待验证）的改动，第一件事是请用户验证其效果。
 4. 之后只读 code-map 定位出的文件。禁止全量读取仓库代码。
 
 这保证"新窗口记得上一个窗口在做什么"：会话之间不共享对话记忆，但 active.md 在每个任务
@@ -47,12 +48,18 @@ description: 项目上下文路由与自进化记忆系统。凡是仓库里存�
 实现者偏见）；Analyst / Scribe 由主agent做是因为前者会重复读文件，后者需要写权限且必须可靠。
 
 小改动豁免：单文件且 <20 行的改动可跳过 Scout 与 Reviewer，但 Scribe 的 journal + active.md
-更新不可跳过——记忆是系统进化的燃料。
+更新不可跳过——记忆是系统进化的燃料（journal 前同样要过确认门）。
 
 ## 任务收尾（每次必做）
 
-1. 按 `references/scribe.md` 写 journal 条目、更新 active.md；涉及设计取舍的补 decisions.md。
-2. 若改动新增/删除/重命名了文件 → 同步修正 code-map 对应条目。
+0. **确认门（先于一切记录）**：改动实施后，明确询问用户"问题解决了吗 / 效果符合预期吗"，
+   拿到用户的真实回复后，才允许写 journal 和 progress 记录。用户的沉默、未回应、AI 自己的
+   推断或自问自答都不算确认。未确认前只在 active.md 记 awaiting-confirmation，绝不在任何
+   记忆文件里写成"已解决"。详见 `references/scribe.md`。
+1. 用户确认后：按 `references/scribe.md` 写 journal 条目、更新 active.md 为 done；涉及设计
+   取舍的补 decisions.md。用户明确说没解决：不写 journal，把失败尝试与现象记入 active.md
+   （status 保持 in-progress 或 blocked），继续修或留给下次会话。
+2. 若改动新增/删除/重命名了文件 → 同步修正 code-map 对应条目（这与确认门无关，地图必须反映现实）。
 3. 检查未蒸馏 journal 数量：`grep -L "distilled:" .ai/memory/journal/*.md | wc -l`
    ≥5，或用户说"复盘/蒸馏" → 按 `references/scribe.md` 的蒸馏流程执行。
 

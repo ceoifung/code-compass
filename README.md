@@ -55,13 +55,14 @@ git clone https://github.com/ceoifung/code-compass.git "$USERPROFILE/.agents/ski
 
 1. 在项目里对 AI 说 **"初始化 code-compass"** → 生成 AGENTS.md 路由节 + `.ai/` 数据层 + 初始状态审计（Stage 0）
 2. 正常开发。问"X 功能在哪个文件"会走路由；新窗口说"继续上次的任务"从 active.md 恢复
-3. 任务完成后 AI 自动写 journal；攒 5 条（或主动说 **"复盘"**）触发蒸馏：FAQ 提炼、code-map 修正、规则升格、progress 记新阶段
+3. 改动实施后 AI 会先问你 **"问题解决了吗"——拿到你的确认才写 journal**（避免把未验证的改动记成"已解决"污染记忆）；攒 5 条（或主动说 **"复盘"**）触发蒸馏：FAQ 提炼、code-map 修正、规则升格、progress 记新阶段
 
 ## 设计原则
 
 - code-map 是地图不是副本：模块级条目、每模块 ≤8 行，细节靠定向 grep
 - AGENTS.md 永远只做路由，规则一律进 `.ai/rules/`，常驻上下文不膨胀
 - 记忆文件提交 git：团队共享、可追溯、蒸馏错了能 revert
+- 记忆宁缺毋滥：journal 只收用户确认解决的问题；未确认的改动停留在 active.md 的 awaiting-confirmation
 - 蒸馏是进化引擎：journal 是原始数据，蒸馏把它变成更准的路由表、FAQ 和规则
 
 ## 致谢
